@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTT Smart Nexus - AR Marker</title>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-three.prod.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+      }
+    }
+    </script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      #container { width: 100vw; height: 100vh; }
+      #ui {
+        position: absolute; top: 10px; left: 10px; z-index: 100;
+        background: rgba(0,0,0,0.7); color: white; padding: 10px;
+        font-family: sans-serif; border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ui">Đang khởi tạo AR... Quét Marker để xem mô hình</div>
+    <div id="container"></div>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+      const start = async () => {
+        // 1. Khởi tạo MindAR
+        const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+          container: document.querySelector("#container"),
+          // Bạn có thể thay link này bằng file .mind của riêng bạn sau này
+          imageTargetSrc: 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/examples/image-tracking/assets/card-example/card.mind',
+        });
+
+        const {renderer, scene, camera} = mindarThree;
+
+        // 2. Thiết lập ánh sáng
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        scene.add(light);
+
+        // 3. Tạo Anchor (Vị trí gắn mô hình vào Marker)
+        const anchor = mindarThree.addAnchor(0);
+
+        // 4. Load mô hình GLB của bạn
+        const loader = new GLTFLoader();
+        loader.load('model.glb', (gltf) => {
+          const model = gltf.scene;
+          // Scale lại cho phù hợp với thực tế (điều chỉnh số này tùy kích thước file)
+          model.scale.set(0.2, 0.2, 0.2); 
+          model.rotation.x = Math.PI / 2; // Xoay để mô hình đứng thẳng trên marker
+          anchor.group.add(model);
+          document.getElementById('ui').innerHTML = "BIM AR Sẵn sàng! Hãy quét hình ảnh đánh dấu.";
+        });
+
+        // 5. Bắt đầu AR
+        await mindarThree.start();
+        renderer.setAnimationLoop(() => {
+          renderer.render(scene, camera);
+        });
+      }
+
+      start();
+    </script>
+  </body>
+</html>
