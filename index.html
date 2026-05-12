@@ -17,21 +17,20 @@
     </script>
 
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: sans-serif; }
         #container { width: 100vw; height: 100vh; }
-        
         #overlay {
-            position: absolute; top: 20px; left: 20px; z-index: 10;
-            background: rgba(0, 0, 0, 0.7); color: #00ffcc;
+            position: absolute; top: 20px; left: 20px; z-index: 100;
+            background: rgba(0, 0, 0, 0.8); color: #00ffcc;
             padding: 15px; border-radius: 8px; border: 1px solid #00ffcc;
-            pointer-events: none; max-width: 80%;
+            pointer-events: none; line-height: 1.5;
         }
         .error { color: #ff4444; border-color: #ff4444; }
     </style>
 </head>
 <body>
 
-    <div id="overlay">Đang kiểm tra Camera & Tệp tin...</div>
+    <div id="overlay">Đang kiểm tra thư viện AR...</div>
     <div id="container"></div>
 
     <script type="module">
@@ -40,68 +39,63 @@
 
         const info = document.getElementById('overlay');
 
-        async function initAR() {
+        async function startSystem() {
+            // Kiểm tra xem thư viện MindAR đã được tải vào window chưa
+            if (!window.MINDAR || !window.MINDAR.IMAGE) {
+                // Nếu chưa có, đợi 500ms rồi thử lại
+                info.innerHTML = "Đang đợi thư viện MindAR tải...";
+                setTimeout(startSystem, 500);
+                return;
+            }
+
             try {
-                // 1. Khởi tạo MindAR với kiểm tra container
                 const container = document.querySelector("#container");
                 const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                     container: container,
-                    imageTargetSrc: './targets.mind', // Đảm bảo tệp này tồn tại
+                    imageTargetSrc: './targets.mind',
                 });
 
                 const {renderer, scene, camera} = mindarThree;
 
-                // 2. Thiết lập ánh sáng (Quan trọng để thấy model 3D)
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-                scene.add(ambientLight);
+                // Ánh sáng
+                scene.add(new THREE.AmbientLight(0xffffff, 0.8));
                 const directLight = new THREE.DirectionalLight(0xffffff, 1);
                 directLight.position.set(5, 10, 7);
                 scene.add(directLight);
 
-                // 3. Tạo điểm neo (Anchor)
                 const anchor = mindarThree.addAnchor(0);
 
-                // 4. Tải mô hình BIM (.glb)
+                // Tải model
                 const loader = new GLTFLoader();
-                loader.load(
-                    './model.glb', 
-                    (gltf) => {
-                        const model = gltf.scene;
-                        // Điều chỉnh tỉ lệ để không bị quá to che hết màn hình
-                        model.scale.set(0.1, 0.1, 0.1);
-                        model.rotation.x = Math.PI / 2; // Đặt model nằm ngang trên mặt marker
-                        anchor.group.add(model);
-                        info.innerHTML = "SẴN SÀNG: Hãy quét ảnh Marker ngoài thực địa.";
-                    },
-                    undefined,
-                    (err) => {
-                        console.error("Lỗi tải model.glb:", err);
-                        info.innerHTML = "LỖI: Không tìm thấy file model.glb hoặc file bị lỗi.";
-                        info.classList.add('error');
-                    }
-                );
+                loader.load('./model.glb', (gltf) => {
+                    const model = gltf.scene;
+                    model.scale.set(0.1, 0.1, 0.1);
+                    model.rotation.x = Math.PI / 2;
+                    anchor.group.add(model);
+                    info.innerHTML = "SẴN SÀNG: Hãy quét ảnh Marker.";
+                }, undefined, (err) => {
+                    info.innerHTML = "LỖI: Không tìm thấy file model.glb";
+                    info.classList.add('error');
+                });
 
-                // 5. Bắt đầu Camera (Đợi quyền từ người dùng)
-                info.innerHTML = "Đang yêu cầu quyền truy cập Camera...";
+                // Khởi động Camera
+                info.innerHTML = "Đang yêu cầu quyền Camera...";
                 await mindarThree.start();
                 
-                // 6. Vòng lặp Render (Chỉ chạy khi video đã sẵn sàng)
                 renderer.setAnimationLoop(() => {
-                    // Kiểm tra an toàn để tránh lỗi "reading image"
                     if (mindarThree.video && mindarThree.video.readyState >= 2) {
                         renderer.render(scene, camera);
                     }
                 });
 
             } catch (error) {
-                console.error("Hệ thống lỗi:", error);
-                info.innerHTML = "LỖI HỆ THỐNG: " + error.message + "<br>Vui lòng dùng HTTPS hoặc Localhost.";
+                info.innerHTML = "LỖI: " + error.message;
                 info.classList.add('error');
             }
         }
 
-        // Tự động chạy khi load trang
-        window.addEventListener('load', initAR);
+        // Chạy hệ thống khi trang load xong hoàn toàn
+        window.onload = startSystem;
     </script>
 </body>
 </html>
