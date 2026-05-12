@@ -1,101 +1,33 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIM AR - UTT Smart Nexus</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-three.prod.js"></script>
-    
-    <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
-      }
-    }
-    </script>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Nhúng thư viện A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- Nhúng thư viện Mind-AR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+  <body>
+    <!-- 
+      Cấu hình Mind-AR: 
+      imageTargetSrc: Đường dẫn tới file targets.mind của bạn 
+    -->
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      
+      <a-assets>
+        <!-- Khai báo model 3D -->
+        <a-asset-item id="myModel" src="./model.glb"></a-asset-item>
+      </a-assets>
 
-    <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: sans-serif; }
-        #container { width: 100vw; height: 100vh; }
-        #overlay {
-            position: absolute; top: 20px; left: 20px; z-index: 100;
-            background: rgba(0, 0, 0, 0.8); color: #00ffcc;
-            padding: 15px; border-radius: 8px; border: 1px solid #00ffcc;
-            pointer-events: none; line-height: 1.5;
-        }
-        .error { color: #ff4444; border-color: #ff4444; }
-    </style>
-</head>
-<body>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <div id="overlay">Đang kiểm tra thư viện AR...</div>
-    <div id="container"></div>
-
-    <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-        const info = document.getElementById('overlay');
-
-        async function startSystem() {
-            // Kiểm tra xem thư viện MindAR đã được tải vào window chưa
-            if (!window.MINDAR || !window.MINDAR.IMAGE) {
-                // Nếu chưa có, đợi 500ms rồi thử lại
-                info.innerHTML = "Đang đợi thư viện MindAR tải...";
-                setTimeout(startSystem, 500);
-                return;
-            }
-
-            try {
-                const container = document.querySelector("#container");
-                const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-                    container: container,
-                    imageTargetSrc: './targets.mind',
-                });
-
-                const {renderer, scene, camera} = mindarThree;
-
-                // Ánh sáng
-                scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-                const directLight = new THREE.DirectionalLight(0xffffff, 1);
-                directLight.position.set(5, 10, 7);
-                scene.add(directLight);
-
-                const anchor = mindarThree.addAnchor(0);
-
-                // Tải model
-                const loader = new GLTFLoader();
-                loader.load('./model.glb', (gltf) => {
-                    const model = gltf.scene;
-                    model.scale.set(0.1, 0.1, 0.1);
-                    model.rotation.x = Math.PI / 2;
-                    anchor.group.add(model);
-                    info.innerHTML = "SẴN SÀNG: Hãy quét ảnh Marker.";
-                }, undefined, (err) => {
-                    info.innerHTML = "LỖI: Không tìm thấy file model.glb";
-                    info.classList.add('error');
-                });
-
-                // Khởi động Camera
-                info.innerHTML = "Đang yêu cầu quyền Camera...";
-                await mindarThree.start();
-                
-                renderer.setAnimationLoop(() => {
-                    if (mindarThree.video && mindarThree.video.readyState >= 2) {
-                        renderer.render(scene, camera);
-                    }
-                });
-
-            } catch (error) {
-                info.innerHTML = "LỖI: " + error.message;
-                info.classList.add('error');
-            }
-        }
-
-        // Chạy hệ thống khi trang load xong hoàn toàn
-        window.onload = startSystem;
-    </script>
-</body>
+      <!-- 
+        Target Index: 0 tương ứng với ảnh đầu tiên bạn upload khi tạo file .mind
+      -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <!-- Hiển thị mô hình 3D lên trên ảnh nhận dạng -->
+        <a-gltf-model src="#myModel" rotation="0 0 0" position="0 0 0" scale="0.1 0.1 0.1"></a-gltf-model>
+      </a-entity>
+      
+    </a-scene>
+  </body>
 </html>
