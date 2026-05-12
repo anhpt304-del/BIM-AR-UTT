@@ -33,10 +33,10 @@
       const start = async () => {
         // 1. Khởi tạo MindAR
         const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-          container: document.querySelector("#container"),
-          // Bạn có thể thay link này bằng file .mind của riêng bạn sau này
-          imageTargetSrc: 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/examples/image-tracking/assets/card-example/card.mind',
-        });
+      container: document.querySelector("#container"),
+      // Đã thay đổi đường dẫn trỏ đến file cục bộ trong thư mục của bạn
+      imageTargetSrc: './targets.mind', 
+      });
 
         const {renderer, scene, camera} = mindarThree;
 
