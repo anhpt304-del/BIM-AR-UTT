@@ -1,33 +1,65 @@
-<html>
+<!DOCTYPE html>
+<html lang="vi">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Nhúng thư viện A-Frame -->
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <!-- Nhúng thư viện Mind-AR -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trình xem mô hình 3D tương tác</title>
+    
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <style>
+      /* Định dạng giao diện tràn màn hình */
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #f0f3f6; /* Màu nền xám nhẹ dịu mắt */
+        font-family: sans-serif;
+        overflow: hidden;
+      }
+
+      /* Cấu hình khung chứa mô hình 3D */
+      model-viewer {
+        width: 100%;
+        height: 100%;
+        --poster-color: transparent;
+      }
+
+      /* Bản hướng dẫn nhỏ cho người dùng */
+      .instruction-card {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.85);
+        padding: 10px 20px;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        pointer-events: none; /* Không che mất tương tác chuột */
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+      }
+    </style>
   </head>
   <body>
-    <!-- 
-      Cấu hình Mind-AR: 
-      imageTargetSrc: Đường dẫn tới file targets.mind của bạn 
-    -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      
-      <a-assets>
-        <!-- Khai báo model 3D -->
-        <a-asset-item id="myModel" src="./tudinhuong.glb"></a-asset-item>
-      </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <model-viewer 
+      src="./tudinhuong.glb" 
+      camera-controls 
+      auto-rotate 
+      rotation-per-second="30deg"
+      shadow-intensity="1.5" 
+      shadow-softness="1"
+      exposure="1.2"
+      environment-image="neutral"
+      alt="Mô hình 3D tương tác">
+    </model-viewer>
 
-      <!-- 
-        Target Index: 0 tương ứng với ảnh đầu tiên bạn upload khi tạo file .mind
-      -->
-      <a-entity mindar-image-target="targetIndex: 0">
-        <!-- Hiển thị mô hình 3D lên trên ảnh nhận dạng -->
-        <a-gltf-model src="#myModel" scale="1 1 1" position="0 0 0"></a-gltf-model>
-      </a-entity>
-      
-    </a-scene>
+    <div class="instruction-card">
+      👇 Vuốt/Kéo để xoay • Vặn 2 ngón tay/Cuộn chuột để Phóng to/Thu nhỏ
+    </div>
+
   </body>
 </html>
