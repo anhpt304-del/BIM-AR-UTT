@@ -3,62 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trình xem mô hình 3D tương tác</title>
+    <title>Chung kết cuộc thi UTT SPACE UP 2026 </title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
-      /* Định dạng giao diện tràn màn hình */
       body {
         margin: 0;
-        padding: 0;
+        padding: 10px;
+        box-sizing: border-box;
         width: 100vw;
         height: 100vh;
-        background-color: #f0f3f6; /* Màu nền xám nhẹ dịu mắt */
+        background-color: #f0f3f6;
         font-family: sans-serif;
-        overflow: hidden;
       }
 
-      /* Cấu hình khung chứa mô hình 3D */
-      model-viewer {
+      /* Chia khung hình thành 3 phần bằng CSS Grid */
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau trên Máy tính */
+        gap: 15px;
         width: 100%;
         height: 100%;
+      }
+
+      /* Cấu hình cho từng ô chứa Model */
+      .model-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      model-viewer {
+        width: 100%;
+        flex-grow: 1; /* Chiếm hết không gian trống của thẻ chứa */
         --poster-color: transparent;
       }
 
-      /* Bản hướng dẫn nhỏ cho người dùng */
-      .instruction-card {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.85);
-        padding: 10px 20px;
-        border-radius: 30px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        pointer-events: none; /* Không che mất tương tác chuột */
+      /* Nhãn tên mô hình phía dưới */
+      .model-label {
+        background: #fdfdfd;
+        padding: 10px;
         text-align: center;
+        font-weight: bold;
         font-size: 14px;
-        color: #333;
+        color: #444;
+        border-top: 1px solid #eee;
+      }
+
+      /* Tự động chuyển thành 1 cột dọc nếu xem bằng Điện thoại */
+      @media (max-width: 768px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+          overflow-y: auto; /* Cho phép cuộn trang xuống nếu màn hình dọc quá dài */
+        }
+        .model-card {
+          height: 300px; /* Cố định chiều cao mỗi ô trên điện thoại */
+        }
       }
     </style>
   </head>
   <body>
 
-    <model-viewer 
-      src="./tudinhuong.glb" 
-      camera-controls 
-      auto-rotate 
-      rotation-per-second="30deg"
-      shadow-intensity="1.5" 
-      shadow-softness="1"
-      exposure="1.2"
-      environment-image="neutral"
-      alt="Mô hình 3D tương tác">
-    </model-viewer>
+    <div class="grid-container">
 
-    <div class="instruction-card">
-      👇 Vuốt/Kéo để xoay • Vặn 2 ngón tay/Cuộn chuột để Phóng to/Thu nhỏ
+      <div class="model-card">
+        <model-viewer 
+          src="./tudinhuong.glb" 
+          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
+        </model-viewer>
+        <div class="model-label">Mô hình số 1</div>
+      </div>
+
+      <div class="model-card">
+        <model-viewer 
+          src="./uptotop.glb" 
+          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
+        </model-viewer>
+        <div class="model-label">Mô hình số 2</div>
+      </div>
+
+      <div class="model-card">
+        <model-viewer 
+          src="./thu.glb" 
+          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
+        </model-viewer>
+        <div class="model-label">Mô hình số 3</div>
+      </div>
+
     </div>
 
   </body>
