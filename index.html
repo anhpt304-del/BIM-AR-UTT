@@ -14,12 +14,12 @@
         width: 100vw;
         height: 100vh;
         
-        /* --- ĐOẠN THÊM ẢNH NỀN VÀO ĐÂY --- */
-        background-image: url("./background.jpg"); /* Đổi tên file ảnh của bạn ở đây */
-        background-size: cover;                    /* Phủ kín toàn bộ màn hình */
-        background-position: center;              /* Căn giữa ảnh nền */
-        background-repeat: no-repeat;              /* Không lặp lại ảnh */
-        background-attachment: fixed;              /* Giữ cố định nền khi cuộn */
+        /* Ảnh nền */
+        background-image: url("./background.jpg"); 
+        background-size: cover;                    
+        background-position: center;              
+        background-repeat: no-repeat;              
+        background-attachment: fixed;              
         
         font-family: sans-serif;
         overflow: hidden;
@@ -89,6 +89,29 @@
         font-weight: bold;
         pointer-events: none;
         z-index: 10;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      /* --- ĐOẠN ĐỊNH DẠNG DÒNG CHỮ TÊN CUỘC THI PHÍA DƯỚI --- */
+      .contest-title {
+        position: absolute;
+        bottom: 55px; /* Nằm ngay trên thanh hướng dẫn một chút */
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        color: #ffd700; /* Màu vàng hoàng kim nổi bật */
+        padding: 6px 24px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase; /* Viết hoa toàn bộ chữ */
+        letter-spacing: 1px;       /* Giãn cách các chữ cái */
+        pointer-events: none;
+        z-index: 10;
+        text-align: center;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       }
 
       /* Thanh hướng dẫn vuốt zoom phía dưới */
@@ -98,11 +121,13 @@
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 255, 255, 0.8);
-        padding: 8px 16px;
+        padding: 6px 16px;
         border-radius: 20px;
-        font-size: 13px;
-        color: #555;
+        font-size: 12px;
+        color: #444;
         pointer-events: none;
+        z-index: 10;
+        white-space: nowrap;
       }
     </style>
   </head>
@@ -123,6 +148,8 @@
         environment-image="neutral"
         alt="Trình xem mô hình 3D">
       </model-viewer>
+
+      <div class="contest-title">Chung kết cuộc thi UTT SPACE UP 2026</div>
 
       <div class="instruction">Xoay tự do bằng tay • Cuộn/Vặn để Zoom</div>
     </div>
@@ -156,7 +183,7 @@
       btnNext.addEventListener("click", () => {
         currentIndex++;
         if (currentIndex >= models.length) {
-          currentIndex = 0; // Nếu vượt quá model thứ 4 thì quay lại model đầu tiên
+          currentIndex = 0; 
         }
         updateModel(currentIndex);
       });
@@ -165,7 +192,7 @@
       btnPrev.addEventListener("click", () => {
         currentIndex--;
         if (currentIndex < 0) {
-          currentIndex = models.length - 1; // Nếu lùi quá model đầu tiên thì nhảy tới môt hình cuối cùng
+          currentIndex = models.length - 1; 
         }
         updateModel(currentIndex);
       });
