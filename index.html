@@ -3,99 +3,169 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chung kết cuộc thi UTT SPACE UP 2026 </title>
+    <title>Trình xem 3D - Chuyển đổi mô hình</title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
       body {
         margin: 0;
-        padding: 10px;
-        box-sizing: border-box;
+        padding: 0;
         width: 100vw;
         height: 100vh;
         background-color: #f0f3f6;
         font-family: sans-serif;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
-      /* Chia khung hình thành 3 phần bằng CSS Grid */
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau trên Máy tính */
-        gap: 15px;
+      /* Khung chứa trình xem và nút bấm */
+      .viewer-container {
+        position: relative;
         width: 100%;
         height: 100%;
       }
 
-      /* Cấu hình cho từng ô chứa Model */
-      .model-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-
       model-viewer {
         width: 100%;
-        flex-grow: 1; /* Chiếm hết không gian trống của thẻ chứa */
+        height: 100%;
         --poster-color: transparent;
       }
 
-      /* Nhãn tên mô hình phía dưới */
-      .model-label {
-        background: #fdfdfd;
-        padding: 10px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 14px;
-        color: #444;
-        border-top: 1px solid #eee;
+      /* Định dạng chung cho nút mũi tên */
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.85);
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.2s ease;
+        z-index: 10;
+        user-select: none;
       }
 
-      /* Tự động chuyển thành 1 cột dọc nếu xem bằng Điện thoại */
-      @media (max-width: 768px) {
-        .grid-container {
-          grid-template-columns: 1fr;
-          overflow-y: auto; /* Cho phép cuộn trang xuống nếu màn hình dọc quá dài */
-        }
-        .model-card {
-          height: 300px; /* Cố định chiều cao mỗi ô trên điện thoại */
-        }
+      .nav-btn:hover {
+        background: #ffffff;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      .nav-btn:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+
+      /* Vị trí nút trái / phải */
+      #btn-prev { left: 20px; }
+      #btn-next { right: 20px; }
+
+      /* Nhãn hiển thị tên mô hình hiện tại */
+      .model-info {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      /* Thanh hướng dẫn vuốt zoom phía dưới */
+      .instruction {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.8);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        color: #555;
+        pointer-events: none;
       }
     </style>
   </head>
   <body>
 
-    <div class="grid-container">
+    <div class="viewer-container">
+      <div class="model-info" id="model-title">Mô hình 1 / 4</div>
 
-      <div class="model-card">
-        <model-viewer 
-          src="./tudinhuong.glb" 
-          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
-        </model-viewer>
-        <div class="model-label">Mô hình số 1</div>
-      </div>
+      <button class="nav-btn" id="btn-prev">❮</button>
+      <button class="nav-btn" id="btn-next">❯</button>
 
-      <div class="model-card">
-        <model-viewer 
-          src="./uptotop.glb" 
-          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
-        </model-viewer>
-        <div class="model-label">Mô hình số 2</div>
-      </div>
+      <model-viewer 
+        id="viewer"
+        src="./model1.glb" 
+        camera-controls 
+        auto-rotate 
+        shadow-intensity="1.5" 
+        environment-image="neutral"
+        alt="Trình xem mô hình 3D">
+      </model-viewer>
 
-      <div class="model-card">
-        <model-viewer 
-          src="./thu.glb" 
-          camera-controls auto-rotate shadow-intensity="1" environment-image="neutral">
-        </model-viewer>
-        <div class="model-label">Mô hình số 3</div>
-      </div>
-
+      <div class="instruction">Xoay tự do bằng tay • Cuộn/Vặn để Zoom</div>
     </div>
+
+    <script>
+      // 1. Khai báo danh sách 4 file mô hình và tên hiển thị tương ứng
+      const models = [
+        { src: "./model1.glb", title: "Mô hình số 1" },
+        { src: "./model2.glb", title: "Mô hình số 2" },
+        { src: "./model3.glb", title: "Mô hình số 3" },
+        { src: "./model4.glb", title: "Mô hình số 4" }
+      ];
+
+      let currentIndex = 0; // Chỉ số mô hình đang hiển thị (bắt đầu từ 0)
+
+      // 2. Lấy các phần tử HTML ra để xử lý
+      const viewer = document.getElementById("viewer");
+      const modelTitle = document.getElementById("model-title");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      // 3. Hàm cập nhật mô hình mới vào khung hình
+      function updateModel(index) {
+        // Thay đổi nguồn file .glb
+        viewer.setAttribute("src", models[index].src);
+        // Thay đổi dòng chữ tiêu đề phía trên
+        modelTitle.innerText = `${models[index].title} (${index + 1} / ${models.length})`;
+      }
+
+      // 4. Sự kiện khi bấm nút "Sau" (Next)
+      btnNext.addEventListener("click", () => {
+        currentIndex++;
+        if (currentIndex >= models.length) {
+          currentIndex = 0; // Nếu vượt quá model thứ 4 thì quay lại model đầu tiên
+        }
+        updateModel(currentIndex);
+      });
+
+      // 5. Sự kiện khi bấm nút "Trước" (Previous)
+      btnPrev.addEventListener("click", () => {
+        currentIndex--;
+        if (currentIndex < 0) {
+          currentIndex = models.length - 1; // Nếu lùi quá model đầu tiên thì nhảy tới môt hình cuối cùng
+        }
+        updateModel(currentIndex);
+      });
+
+      // Khởi tạo nhãn hiển thị đúng cho lần đầu tiên tải trang
+      updateModel(currentIndex);
+    </script>
 
   </body>
 </html>
