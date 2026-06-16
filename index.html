@@ -13,33 +13,19 @@
         padding: 0;
         width: 100vw;
         height: 100vh;
+        
+        /* Ảnh nền */
+        background-image: url("./background.jpg"); 
+        background-size: cover;                    
+        background-position: center;              
+        background-repeat: no-repeat;              
+        background-attachment: fixed;              
+        
         font-family: sans-serif;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #000; /* Nền đen cơ sở phòng trường hợp ảnh chưa tải xong */
-      }
-
-      /* --- ĐOẠN TẠO LỚP NỀN MỜ --- */
-      .bg-blur {
-        position: fixed;
-        top: -10px;    /* Tràn ra ngoài một chút để không bị vệt trắng ở rìa khi mờ */
-        left: -10px;
-        width: calc(100vw + 20px);
-        height: calc(100vh + 20px);
-        background-image: url("./background.jpg"); /* Tên file ảnh nền của bạn */
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        
-        /* Thay đổi độ mờ ở đây (số px càng lớn thì càng mờ) */
-        filter: blur(8px); 
-        
-        /* Giảm bớt độ sáng một chút (0.7 = 70% độ sáng gốc) để mô hình nổi bật hơn */
-        opacity: 0.7; 
-        
-        z-index: -1; /* Đẩy ra sau cùng dưới tất cả các phần tử khác */
       }
 
       /* Khung chứa trình xem và nút bấm */
@@ -47,7 +33,6 @@
         position: relative;
         width: 100%;
         height: 100%;
-        z-index: 1;
       }
 
       model-viewer {
@@ -108,20 +93,20 @@
         white-space: nowrap;
       }
 
-      /* Dòng chữ tên cuộc thi phía dưới */
+      /* --- ĐOẠN ĐỊNH DẠNG DÒNG CHỮ TÊN CUỘC THI PHÍA DƯỚI --- */
       .contest-title {
         position: absolute;
-        bottom: 55px; 
+        bottom: 55px; /* Nằm ngay trên thanh hướng dẫn một chút */
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.6);
-        color: #ffd700; 
+        color: #ffd700; /* Màu vàng hoàng kim nổi bật */
         padding: 6px 24px;
         border-radius: 8px;
         font-size: 18px;
         font-weight: bold;
-        text-transform: uppercase; 
-        letter-spacing: 1px;       
+        text-transform: uppercase; /* Viết hoa toàn bộ chữ */
+        letter-spacing: 1px;       /* Giãn cách các chữ cái */
         pointer-events: none;
         z-index: 10;
         text-align: center;
@@ -147,8 +132,6 @@
     </style>
   </head>
   <body>
-
-    <div class="bg-blur"></div>
 
     <div class="viewer-container">
       <div class="model-info" id="model-title">Mô hình 1 / 4</div>
@@ -180,7 +163,7 @@
         { src: "./xemvakhen.glb", title: "Nhóm ECO BUILDERS" }
       ];
 
-      let currentIndex = 2; 
+      let currentIndex = 2; // Chỉ số mô hình đang hiển thị (bắt đầu từ 0)
 
       // 2. Lấy các phần tử HTML ra để xử lý
       const viewer = document.getElementById("viewer");
@@ -190,7 +173,9 @@
 
       // 3. Hàm cập nhật mô hình mới vào khung hình
       function updateModel(index) {
+        // Thay đổi nguồn file .glb
         viewer.setAttribute("src", models[index].src);
+        // Thay đổi dòng chữ tiêu đề phía trên
         modelTitle.innerText = `${models[index].title} (${index + 1} / ${models.length})`;
       }
 
@@ -214,3 +199,7 @@
 
       // Khởi tạo nhãn hiển thị đúng cho lần đầu tiên tải trang
       updateModel(currentIndex);
+    </script>
+
+  </body>
+</html>
