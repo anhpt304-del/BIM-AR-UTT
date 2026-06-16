@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mô hình 3D cuộc thi: UTT SPACE UP 2026 </title>
+    <title>Mô hình 3D cuộc thi: UTT SPACE UP 2026</title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
@@ -13,7 +13,14 @@
         padding: 0;
         width: 100vw;
         height: 100vh;
-        background-color: #f0f3f6;
+        
+        /* --- ĐOẠN THÊM ẢNH NỀN VÀO ĐÂY --- */
+        background-image: url("./background.jpg"); /* Đổi tên file ảnh của bạn ở đây */
+        background-size: cover;                    /* Phủ kín toàn bộ màn hình */
+        background-position: center;              /* Căn giữa ảnh nền */
+        background-repeat: no-repeat;              /* Không lặp lại ảnh */
+        background-attachment: fixed;              /* Giữ cố định nền khi cuộn */
+        
         font-family: sans-serif;
         overflow: hidden;
         display: flex;
