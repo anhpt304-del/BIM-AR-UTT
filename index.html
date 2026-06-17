@@ -14,7 +14,7 @@
         width: 100vw;
         height: 100vh;
         
-        /* Ảnh nền */
+        /* --- GIỮ NGUYÊN ẢNH NỀN SẮC NÉT --- */
         background-image: url("./background.jpg"); 
         background-size: cover;                    
         background-position: center;              
@@ -93,20 +93,20 @@
         white-space: nowrap;
       }
 
-      /* --- ĐOẠN ĐỊNH DẠNG DÒNG CHỮ TÊN CUỘC THI PHÍA DƯỚI --- */
+      /* Định dạng dòng chữ tên cuộc thi phía dưới */
       .contest-title {
         position: absolute;
-        bottom: 55px; /* Nằm ngay trên thanh hướng dẫn một chút */
+        bottom: 55px; 
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.6);
-        color: #ffd700; /* Màu vàng hoàng kim nổi bật */
+        color: #ffd700; 
         padding: 6px 24px;
         border-radius: 8px;
         font-size: 18px;
         font-weight: bold;
-        text-transform: uppercase; /* Viết hoa toàn bộ chữ */
-        letter-spacing: 1px;       /* Giãn cách các chữ cái */
+        text-transform: uppercase; 
+        letter-spacing: 1px;       
         pointer-events: none;
         z-index: 10;
         text-align: center;
@@ -134,14 +134,14 @@
   <body>
 
     <div class="viewer-container">
-      <div class="model-info" id="model-title">Mô hình 1 / 4</div>
+      <div class="model-info" id="model-title">Mô hình 1 / 5</div>
 
       <button class="nav-btn" id="btn-prev">❮</button>
       <button class="nav-btn" id="btn-next">❯</button>
 
       <model-viewer 
         id="viewer"
-        src="./model1.glb" 
+        src="./tudinhuong.glb" 
         camera-controls 
         auto-rotate 
         shadow-intensity="1.5" 
@@ -155,15 +155,16 @@
     </div>
 
     <script>
-      // 1. Khai báo danh sách 4 file mô hình và tên hiển thị tương ứng
+      // 1. Khai báo danh sách 5 file mô hình glb và tên hiển thị tương ứng
       const models = [
         { src: "./tudinhuong.glb", title: "Nhóm Tử Đinh Hương" },
         { src: "./uptotop.glb", title: "Nhóm Up to Top" },
-        { src: "./ecobuilder.glb", title: "Nhóm cùng Xem và Khen" },
-        { src: "./xemvakhen.glb", title: "Nhóm ECO BUILDERS" }
+        { src: "./ecobuilder.glb", title: "Nhóm ECO BUILDERS" },
+        { src: "./xemvakhen.glb", title: "Nhóm cùng Xem và Khen" },
+        { src: "./model.glb", title: "Nhóm Đội Số 5" } // Sửa lại tên file .glb và tiêu đề nhóm 5 tại đây
       ];
 
-      let currentIndex = 0; // Chỉ số mô hình đang hiển thị (bắt đầu từ 0)
+      let currentIndex = 0; // Để mặc định hiển thị Nhóm số 1 đầu tiên khi mở trang web
 
       // 2. Lấy các phần tử HTML ra để xử lý
       const viewer = document.getElementById("viewer");
@@ -173,9 +174,7 @@
 
       // 3. Hàm cập nhật mô hình mới vào khung hình
       function updateModel(index) {
-        // Thay đổi nguồn file .glb
         viewer.setAttribute("src", models[index].src);
-        // Thay đổi dòng chữ tiêu đề phía trên
         modelTitle.innerText = `${models[index].title} (${index + 1} / ${models.length})`;
       }
 
@@ -197,7 +196,7 @@
         updateModel(currentIndex);
       });
 
-      // Khởi tạo nhãn hiển thị đúng cho lần đầu tiên tải trang
+      // Khởi tạo hiển thị cho lần đầu tiên tải trang
       updateModel(currentIndex);
     </script>
 
